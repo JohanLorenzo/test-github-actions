@@ -31,4 +31,4 @@ jobs:
       - name: Build docker image
         uses: docker://gcr.io/kaniko-project/executor
         with:
-          args: "--dockerfile /github/workspace/docker/python-tools/Dockerfile --no-push"
+          args: "--dockerfile /github/workspace/docker/${{ matrix.docker_image }}/Dockerfile --no-push"
