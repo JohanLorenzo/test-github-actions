@@ -21,7 +21,5 @@ jobs:
       - name: Use different docker image
         uses: gcr.io/kaniko-project/executor
         with:
-          args:
-            - "--context=${{ github.workspace }}/docker/python-tools"
-            - "--no-push"
+          args: "--context=${{ github.workspace }}/docker/python-tools --no-push"
       - run: echo "🍏 This job's status is ${{ job.status }}."
