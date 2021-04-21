@@ -1,3 +1,3 @@
 FROM python:3
 
-RUN pip install tox
+RUN pip install ansible
