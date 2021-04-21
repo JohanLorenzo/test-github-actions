@@ -1,25 +1,34 @@
 name: GitHub Actions Demo
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  get_repo_config:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - id: set_docker_images
+        run: echo "::set-output name=docker_images::$(find docker -maxdepth 1 -mindepth 1)"
+
+    outputs:
+      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}
+
+  build_docker_images:
+    needs: get_repo_config
     runs-on: ubuntu-20.04
     container:
       image: ubuntu:21.04
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
+
+    strategy:
+      matrix:
+        docker_image: ${{ fromJson(needs.get_repo_config.outputs.docker_images) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Set environment
-        run: echo "python_tools_hash=${{ hashFiles('./docker/python-tools/**') }}" >> $GITHUB_ENV
-      - name: List files in the repository
-        uses: docker://ubuntu
-        with:
-          entrypoint: ls
-          args: -R /github/workspace
-      - run: echo "${{ env.python_tools_hash }}"
+        run: echo "image_hash=${{ hashFiles('${{ matrix.docker_image }}/**') }}" >> $GITHUB_ENV
+      - run: echo "${{ env.image_hash }}"
       - name: Build docker image
         uses: docker://gcr.io/kaniko-project/executor
         with:
           args: "--dockerfile /github/workspace/docker/python-tools/Dockerfile --no-push"
-      - run: echo "🍏 This job's status is ${{ job.status }}."
