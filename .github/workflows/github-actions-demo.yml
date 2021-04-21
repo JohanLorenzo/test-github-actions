@@ -11,7 +11,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Set environment
-        run: echo "python_tools_hash=${{ hashFiles('**/docker/python-tools/**') }}" >> $GITHUB_ENV
+        run: echo "python_tools_hash=${{ hashFiles('./docker/python-tools/**') }}" >> $GITHUB_ENV
       - name: List files in the repository
         uses: docker://ubuntu
         with:
