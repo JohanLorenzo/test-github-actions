@@ -8,7 +8,7 @@ jobs:
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
     env:
-      - PYTHON_TOOLS_HASH: ${{ hashFiles('**/docker/python-tools/**') }}
+      PYTHON_TOOLS_HASH: ${{ hashFiles('**/docker/python-tools/**') }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
