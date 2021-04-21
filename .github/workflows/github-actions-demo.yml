@@ -12,6 +12,7 @@ jobs:
       docker_images: ${{ steps.set_docker_images.outputs.docker_images }}
 
   get_repo_config_with_hashes:
+    needs: get_repo_config
     runs-on: ubuntu-20.04
     strategy:
       matrix:
