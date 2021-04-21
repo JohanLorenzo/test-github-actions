@@ -6,28 +6,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set_docker_images
-        run: echo "::set-output name=docker_images::[$(find docker -maxdepth 1 -mindepth 1 -printf '"%f", ')]"
+        run: echo "::set-output name=docker_images::$(python3 get_docker_hashes.py)"
 
     outputs:
       docker_images: ${{ steps.set_docker_images.outputs.docker_images }}
 
-  get_repo_config_with_hashes:
-    needs: get_repo_config
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
-
-    steps:
-      - uses: actions/checkout@v2
-      - id: set_docker_images_hashes
-        run: echo "::set-output name=docker_images::[\"${{ matrix.docker_image }}\", \"${{ hashFiles(format('docker/{0}/**', matrix.docker_image)) }}\"]"
-
-    outputs:
-      docker_images: ${{ steps.set_docker_images_hashes.outputs.docker_images }}
-
   build_docker_images:
-    needs: get_repo_config_with_hashes
+    needs: get_repo_config
     runs-on: ubuntu-20.04
     container:
       image: ubuntu:21.04
@@ -36,13 +21,12 @@ jobs:
 
     strategy:
       matrix:
-        docker_image: ${{ fromJSON(needs.get_repo_config_with_hashes.outputs.docker_images) }}
+        docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - run: echo "${{ matrix.docker_image[0] }}"
-      - run: echo "${{ matrix.docker_image[1] }}"
+      - run: echo "${{ matrix.docker_image.sha256 }}"
       - name: Build docker image
         uses: docker://gcr.io/kaniko-project/executor
         with:
-          args: "--dockerfile /github/workspace/docker/${{ matrix.docker_image[0] }}/Dockerfile --no-push"
+          args: "--dockerfile /github/workspace/docker/${{ matrix.docker_image.name }}/Dockerfile --no-push"
