@@ -19,9 +19,9 @@ jobs:
         uses: docker://ubuntu
         with:
           entrypoint: ls
-          args: -R ${{ github.workspace }}
+          args: -R /github/workspace
       - name: Use different docker image
         uses: docker://gcr.io/kaniko-project/executor
         with:
-          args: "--dockerfile ${{ github.workspace }}/docker/python-tools/Dockerfile --no-push"
+          args: "--dockerfile /github/workspace/docker/python-tools/Dockerfile --no-push"
       - run: echo "🍏 This job's status is ${{ job.status }}."
