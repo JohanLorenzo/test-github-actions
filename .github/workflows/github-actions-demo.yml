@@ -9,7 +9,7 @@ jobs:
         run: echo "::set-output name=docker_images::[$(for folder in $(find docker -maxdepth 1 -mindepth 1); do echo -n "$folder, "; done)]"
 
     outputs:
-      docker_images: ${{ fromJSON(steps.set_docker_images.outputs.docker_images) }}
+      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}
 
   build_docker_images:
     needs: get_repo_config
@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        docker_image: ${{ needs.get_repo_config.outputs.docker_images }}
+        docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
