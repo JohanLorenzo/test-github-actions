@@ -28,7 +28,7 @@ jobs:
       - name: Set hash path
         run: echo "hash_path='${{ matrix.docker_image }}/**'" >> $GITHUB_ENV
       - name: Set image hash
-        run: echo "image_hash=${{ hashFiles(env.hash_path) }}" >> $GITHUB_ENV
+        run: echo "image_hash=${{ hashFiles('${{ env.hash_path }}') }}" >> $GITHUB_ENV
       - run: echo "${{ env.image_hash }}"
       - name: Build docker image
         uses: docker://gcr.io/kaniko-project/executor
