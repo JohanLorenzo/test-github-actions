@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set_docker_images
-        run: echo "::set-output name=docker_images::[$(for folder in $(find docker -maxdepth 1 -mindepth 1); do echo -n "$folder, "; done)]"
+        run: echo "::set-output name=docker_images::[$(for folder in $(find docker -maxdepth 1 -mindepth 1); do echo -n "\"$folder\", "; done)]"
 
       - run: echo ${{ steps.set_docker_images.outputs.docker_images }}
 
