@@ -6,10 +6,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set_docker_images
-        run: echo "::set-output name=docker_images::$(find docker -maxdepth 1 -mindepth 1)"
+        run: echo "::set-output name=docker_images::[$(for folder in $(find docker -maxdepth 1 -mindepth 1); do echo -n "$folder, "; done)]"
 
     outputs:
-      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}
+      docker_images: ${{ fromJSON(steps.set_docker_images.outputs.docker_images) }}
 
   build_docker_images:
     needs: get_repo_config
