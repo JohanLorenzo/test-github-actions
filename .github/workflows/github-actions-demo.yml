@@ -7,6 +7,8 @@ jobs:
       image: ubuntu:21.04
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
+    env:
+      - PYTHON_TOOLS_HASH: ${{ hashFiles('**/docker/python-tools/**') }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -15,6 +17,7 @@ jobs:
         with:
           entrypoint: ls
           args: -R /github/workspace
+      - run: echo "$PYTHON_TOOLS_HASH"
       - name: Build docker image
         uses: docker://gcr.io/kaniko-project/executor
         with:
