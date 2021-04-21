@@ -7,11 +7,11 @@ jobs:
       image: ubuntu:21.04
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
-    env:
-      PYTHON_TOOLS_HASH: ${{ hashFiles('**/docker/python-tools/**') }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+        env:
+          PYTHON_TOOLS_HASH: ${{ hashFiles('**/docker/python-tools/**') }}
       - name: List files in the repository
         uses: docker://ubuntu
         with:
