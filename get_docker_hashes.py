@@ -2,11 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Python implementation of Github's hashFile[1]. It's a modified version of
-# Mozilla's hash utils[2]
+# Python implementation of Github's hashFile[1][2]. It's a modified version of
+# Mozilla's hash utils[3]
 #
-# [1] https://github.com/actions/runner/blob/e9ae42693f71e33dbe615d4e955a599c9d73df08/src/Misc/expressionFunc/hashFiles/src/hashFiles.ts
-# [2] https://searchfox.org/mozilla-central/rev/d280cc26237b62096b89317e4ed6dea8b2bdf822/taskcluster/taskgraph/util/hash.py
+# [1] https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#hashfiles
+# [2] https://github.com/actions/runner/blob/e9ae42693f71e33dbe615d4e955a599c9d73df08/src/Misc/expressionFunc/hashFiles/src/hashFiles.ts
+# [3] https://searchfox.org/mozilla-central/rev/d280cc26237b62096b89317e4ed6dea8b2bdf822/taskcluster/taskgraph/util/hash.py
 
 import hashlib
 import io

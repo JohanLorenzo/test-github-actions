@@ -9,7 +9,7 @@ jobs:
         run: echo "::set-output name=docker_images::$(python3 get_docker_hashes.py)"
 
     outputs:
-      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}
+      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}   # Format: [{"name", "sha256"}]
 
   build_docker_images:
     needs: get_repo_config
@@ -21,6 +21,7 @@ jobs:
 
     strategy:
       matrix:
+        # Original idea at: https://tomasvotruba.com/blog/2020/11/16/how-to-make-dynamic-matrix-in-github-actions/
         docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
     steps:
       - name: Check out repository code
