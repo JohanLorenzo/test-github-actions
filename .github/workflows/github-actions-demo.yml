@@ -15,6 +15,7 @@ jobs:
     needs: get_repo_config
     runs-on: ubuntu-20.04
     container:
+      # We need the debug container in order to shell in other commands
       image: gcr.io/kaniko-project/executor:debug
 
     strategy:
@@ -28,6 +29,8 @@ jobs:
         env:
           FORMAT: '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}'
       - name: Build test image
+        # We use --force because kaniko believes it's not running inside a container. That might because we're using
+        # the debug image?
         run: /kaniko/executor
           --force
           --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.name }}/Dockerfile
