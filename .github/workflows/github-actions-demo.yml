@@ -24,11 +24,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Create dockerconfig
-        run: printf $FORMAT ${{ secrets.DOCKER_COM_TOKEN }} > /kaniko/.docker/config.json
+        run: printf $FORMAT ${{ secrets.DOCKERHUB_CREDENTIALS_BASE64 }} > /kaniko/.docker/config.json
         env:
           FORMAT: '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}'
       - name: Build test image
         run: /kaniko/executor
           --force
           --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.name }}/Dockerfile
-          --destination=johanlorenzo/test-github-action/${{ matrix.docker_image.name }}:${{ matrix.docker_image.sha256 }}
+          --destination=johanlorenzo/test-github-action:${{ matrix.docker_image.name }}-${{ matrix.docker_image.sha256 }}
