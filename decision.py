@@ -14,10 +14,12 @@ import io
 import json
 import os
 import pathlib
+import requests
 import six
 
 _ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 _DOCKER_DIR = os.path.join(_ROOT_DIR, 'docker')
+_DOCKER_REPOSITORY = 'johanlorenzo/test-github-action'
 
 
 def hash_path(path):
@@ -59,12 +61,43 @@ def hash_paths(base_path, patterns):
     return h.hexdigest()
 
 
+def _get_docker_image_hash_on_registry(docker_repository, docker_image_tag):
+    # Taken from https://stackoverflow.com/questions/28320134/how-can-i-list-all-tags-for-a-docker-image-on-a-remote-registry/51921869#51921869
+    auth_url=f"https://auth.docker.io/token?service=registry.docker.io&scope=repository:{docker_repository}:pull"
+    auth_request = requests.get(auth_url)
+    auth_request.raise_for_status()
+    token = auth_request.json()["token"]
+
+    index_url=f"https://index.docker.io/v2/{docker_repository}/manifests/{docker_image_tag}"
+    index_request = requests.get(index_url, headers={
+        "Accept": "application/vnd.docker.distribution.manifest.v2+json",
+        "Authorization": f"Bearer {token}",
+    })
+    try:
+        index_request.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            return ""
+        raise
+
+    image_hash_on_registry = index_request.headers["Docker-Content-Digest"]
+    return image_hash_on_registry
+
+
 def main():
     docker_dirs = os.listdir(_DOCKER_DIR)
     docker_images = [{
-        "name": docker_dir,
-        "sha256": hash_paths(_DOCKER_DIR, [os.path.join(docker_dir, "**/*")]),
+        "image_name": docker_dir,
+        "image_tag": "{}-{}".format(
+            docker_dir,
+            hash_paths(_DOCKER_DIR, [os.path.join(docker_dir, "**/*")])
+        ),
     } for docker_dir in docker_dirs]
+
+    docker_images = [{
+        **docker_image,
+        "image_hash_on_registry": _get_docker_image_hash_on_registry(_DOCKER_REPOSITORY, docker_image["image_tag"]),
+    } for docker_image in docker_images]
 
     print(json.dumps(docker_images))
 

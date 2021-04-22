@@ -5,11 +5,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - run: python3 -m pip install requests
       - id: set_docker_images
-        run: echo "::set-output name=docker_images::$(python3 get_docker_hashes.py)"
+        run: echo "::set-output name=docker_images::$(python3 decision.py)"
 
     outputs:
-      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}   # Format: [{"name", "sha256"}]
+      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}   # Format: [{"image_name", "image_tag", "image_hash_on_registry"}]
 
   build_docker_images:
     needs: get_repo_config
@@ -22,6 +23,7 @@ jobs:
       matrix:
         # Original idea at: https://tomasvotruba.com/blog/2020/11/16/how-to-make-dynamic-matrix-in-github-actions/
         docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
+    if: ${{ matrix.docker_image.image_hash_on_registry }} == ""
     steps:
       - uses: actions/checkout@v1
       - name: Create dockerconfig
@@ -30,10 +32,10 @@ jobs:
           FORMAT: '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}'
 
       # We may want to sue the docker's Github Action, instead https://github.com/docker/build-push-action
-      - name: Build and push ${{ matrix.docker_image.name }}-${{ matrix.docker_image.sha256 }}
+      - name: Build and push ${{ matrix.docker_image.image_name }}-${{ matrix.docker_image.image_tag }}
         # We use --force because kaniko believes it's not running inside a container. That might because we're using
         # the debug image?
         run: /kaniko/executor
           --force
-          --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.name }}/Dockerfile
-          --destination=johanlorenzo/test-github-action:${{ matrix.docker_image.name }}-${{ matrix.docker_image.sha256 }}
+          --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.image_name }}/Dockerfile
+          --destination=johanlorenzo/test-github-action:${{ matrix.docker_image.image_name }}-${{ matrix.docker_image.image_tag }}
