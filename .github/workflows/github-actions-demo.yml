@@ -31,4 +31,4 @@ jobs:
         run: /kaniko/executor
           --force
           --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.name }}/Dockerfile
-          --destination=JohanLorenzo/test-github-action/${{ matrix.docker_image.name }}:${{ matrix.docker_image.sha256 }}
+          --destination=johanlorenzo/test-github-action/${{ matrix.docker_image.name }}:${{ matrix.docker_image.sha256 }}
