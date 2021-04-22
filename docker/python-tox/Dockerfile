@@ -1,3 +1,3 @@
-FROM python:3@sha256:ee2da4ef36f8b0f3bf076450712ab797418fc68676fa7686490ab307a7ddbdcd
+FROM python:3@sha256:07c51c65ab9c1a156a1fb51eff3ec04feff7b85b2acb7d6cc65148b218d67402
 
 RUN pip install tox
