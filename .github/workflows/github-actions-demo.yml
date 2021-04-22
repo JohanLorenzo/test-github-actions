@@ -60,6 +60,6 @@ jobs:
         applications: ${{ fromJSON(needs.get_repo_config.outputs.applications) }}
 
     container:
-      image: johanlorenzo/test-github-action:${{ matrix.application.image_tag }}
+      image: johanlorenzo/test-github-action:${{ matrix.applications.image_tag }}
     steps:
       - run: python -c 'print("hello world")'
