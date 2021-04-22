@@ -12,7 +12,7 @@
 import hashlib
 import io
 import json
-import logger
+import logging
 import os
 import pathlib
 import requests
