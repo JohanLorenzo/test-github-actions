@@ -29,5 +29,6 @@ jobs:
           FORMAT: '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}'
       - name: Build test image
         run: /kaniko/executor
+          --force
           --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.name }}/Dockerfile
           --destination=JohanLorenzo/test-github-action/${{ matrix.docker_image.name }}:${{ matrix.docker_image.sha256 }}
