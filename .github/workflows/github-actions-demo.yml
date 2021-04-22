@@ -50,6 +50,7 @@ jobs:
       - build_docker_images
     runs-on: ubuntu-20.04
 
+    if: ${{ always() }}
     strategy:
       matrix:
         applications: ${{ fromJSON(needs.get_repo_config.outputs.applications) }}
