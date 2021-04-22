@@ -105,7 +105,7 @@ def _get_docker_image_hash_on_registry(docker_repository, docker_image_tag):
         raise
 
     image_hash_on_registry = index_request.headers["Docker-Content-Digest"]
-    log.warn(f'Tag "{docker_image_tag}" already exists. Registry has this hash associated to it: {image_hash_on_registry}')
+    log.warning(f'Tag "{docker_image_tag}" already exists. Registry has this hash associated to it: {image_hash_on_registry}')
     return image_hash_on_registry
 
 
@@ -154,7 +154,7 @@ def main():
     with open(os.path.join(_ROOT_DIR, "docker_images.json"), "w") as f:
         json.dump(docker_images_to_build, f)
 
-    applications_with_tags = _get_docker_image_tags_for_applications(_APPLICATIONS, docker_images)
+    applications_with_tags = _get_docker_image_tags_for_applications(_APPLICATIONS, all_docker_images)
     with open(os.path.join(_ROOT_DIR, "applications.json"), "w") as f:
         json.dump(applications_with_tags, f)
 
