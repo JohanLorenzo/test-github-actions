@@ -12,10 +12,18 @@
 import hashlib
 import io
 import json
+import logger
 import os
 import pathlib
 import requests
 import six
+
+log = logging.getLogger(__name__)
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s: %(message)s",
+    level=logging.DEBUG
+)
 
 _ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 _DOCKER_DIR = os.path.join(_ROOT_DIR, 'docker')
@@ -97,7 +105,12 @@ def _get_docker_image_hash_on_registry(docker_repository, docker_image_tag):
         raise
 
     image_hash_on_registry = index_request.headers["Docker-Content-Digest"]
+    logger.warn(f'Tag "{docker_image_tag}" already exists. Registry has this hash associated to it: {image_hash_on_registry}')
     return image_hash_on_registry
+
+
+def _does_docker_image_already_exist_on_registry(docker_repository, docker_image_tag):
+    return _get_docker_image_hash_on_registry(docker_repository, docker_image_tag) != ""
 
 
 def _get_docker_image_tag_for_single_application(application, docker_images):
@@ -124,7 +137,7 @@ def _get_docker_image_tags_for_applications(applications, docker_images):
 
 def main():
     docker_dirs = os.listdir(_DOCKER_DIR)
-    docker_images = [{
+    all_docker_images = [{
         "image_name": docker_dir,
         "image_tag": "{}-{}".format(
             docker_dir,
@@ -132,13 +145,14 @@ def main():
         ),
     } for docker_dir in docker_dirs]
 
-    docker_images = [{
-        **docker_image,
-        "image_hash_on_registry": _get_docker_image_hash_on_registry(_DOCKER_REPOSITORY, docker_image["image_tag"]),
-    } for docker_image in docker_images]
+    docker_images_to_build = [
+        docker_image
+        for docker_image in all_docker_images
+        if not _does_docker_image_already_exist_on_registry(_DOCKER_REPOSITORY, docker_image["image_tag"])
+    ]
 
     with open(os.path.join(_ROOT_DIR, "docker_images.json"), "w") as f:
-        json.dump(docker_images, f)
+        json.dump(docker_images_to_build, f)
 
     applications_with_tags = _get_docker_image_tags_for_applications(_APPLICATIONS, docker_images)
     with open(os.path.join(_ROOT_DIR, "applications.json"), "w") as f:
