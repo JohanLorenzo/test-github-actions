@@ -50,7 +50,9 @@ jobs:
         if: ${{ matrix.docker_image.image_hash_on_registry == '' }}
 
   build:
-    needs: build_docker_images
+    needs:
+      - get_repo_config
+      - build_docker_images
     runs-on: ubuntu-20.04
 
     strategy:
