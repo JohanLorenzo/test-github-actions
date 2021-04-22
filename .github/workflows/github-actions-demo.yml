@@ -23,7 +23,7 @@ jobs:
       # We need the debug container in order to shell in other commands
       image: gcr.io/kaniko-project/executor:debug
 
-    if: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
+    if: ${{ fromJSON(needs.get_repo_config.outputs.docker_images)[0] != null }}
     strategy:
       matrix:
         # Original idea at: https://tomasvotruba.com/blog/2020/11/16/how-to-make-dynamic-matrix-in-github-actions/
