@@ -26,14 +26,14 @@ jobs:
     steps:
       - name: No need to rebuild "${{ matrix.docker_image.image_tag }}", it already exists on registry with hash "${{ matrix.docker_image.image_hash_on_registry }}"
         run: echo "noop"
-        if: ${{ matrix.docker_image.image_hash_on_registry != "" }}
+        if: ${{ matrix.docker_image.image_hash_on_registry != '' }}
       - uses: actions/checkout@v1
-        if: ${{ matrix.docker_image.image_hash_on_registry == "" }}
+        if: ${{ matrix.docker_image.image_hash_on_registry == '' }}
       - name: Create dockerconfig
         run: printf $FORMAT ${{ secrets.DOCKERHUB_CREDENTIALS_BASE64 }} > /kaniko/.docker/config.json
         env:
           FORMAT: '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}'
-        if: ${{ matrix.docker_image.image_hash_on_registry == "" }}
+        if: ${{ matrix.docker_image.image_hash_on_registry == '' }}
 
       # We may want to sue the docker's Github Action, instead https://github.com/docker/build-push-action
       - name: Build and push ${{ matrix.docker_image.image_tag }}
@@ -43,4 +43,4 @@ jobs:
           --force
           --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.image_name }}/Dockerfile
           --destination=johanlorenzo/test-github-action:${{ matrix.docker_image.image_tag }}
-        if: ${{ matrix.docker_image.image_hash_on_registry == "" }}
+        if: ${{ matrix.docker_image.image_hash_on_registry == '' }}
