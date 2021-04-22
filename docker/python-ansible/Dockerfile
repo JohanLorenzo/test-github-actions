@@ -1,3 +1,3 @@
-FROM python:3
+FROM python:3@sha256:ee2da4ef36f8b0f3bf076450712ab797418fc68676fa7686490ab307a7ddbdcd
 
 RUN pip install ansible

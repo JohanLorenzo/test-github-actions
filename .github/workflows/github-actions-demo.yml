@@ -23,6 +23,7 @@ jobs:
       # We need the debug container in order to shell in other commands
       image: gcr.io/kaniko-project/executor:debug
 
+    # Hack gotten from https://github.community/t/getting-object-length/17802/5
     if: ${{ fromJSON(needs.get_repo_config.outputs.docker_images)[0] != null }}
     strategy:
       matrix:
