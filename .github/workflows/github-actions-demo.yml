@@ -25,6 +25,7 @@ jobs:
         docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
     steps:
       - name: No need to rebuild ${{ matrix.docker_image.image_tag }}, it already exists on registry with hash ${{ matrix.docker_image.image_hash_on_registry }}
+        run: echo "noop"
         if: ${{ matrix.docker_image.image_hash_on_registry }} != ""
       - uses: actions/checkout@v1
         if: ${{ matrix.docker_image.image_hash_on_registry }} == ""
