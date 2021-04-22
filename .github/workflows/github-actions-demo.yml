@@ -22,7 +22,7 @@ jobs:
         # Original idea at: https://tomasvotruba.com/blog/2020/11/16/how-to-make-dynamic-matrix-in-github-actions/
         docker_image: ${{ fromJSON(needs.get_repo_config.outputs.docker_images) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Create dockerconfig
         run: printf $FORMAT ${{ secrets.DOCKER_COM_TOKEN }} > /kaniko/.docker/config.json
         env:
