@@ -99,6 +99,7 @@ def main():
         "image_hash_on_registry": _get_docker_image_hash_on_registry(_DOCKER_REPOSITORY, docker_image["image_tag"]),
     } for docker_image in docker_images]
 
-    print(json.dumps(docker_images))
+    with open(os.path.join(_ROOT_DIR, "docker_images.json"), "w") as f:
+        json.dump(docker_images, f)
 
 __name__ == "__main__" and main()

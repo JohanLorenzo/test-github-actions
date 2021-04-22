@@ -6,8 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: python3 -m pip install requests
+      - run: python3 decision.py
       - id: set_docker_images
-        run: echo "::set-output name=docker_images::$(python3 decision.py)"
+        run: echo "::set-output name=docker_images::$(cat docker_images.json)"
 
     outputs:
       docker_images: ${{ steps.set_docker_images.outputs.docker_images }}   # Format: [{"image_name", "image_tag", "image_hash_on_registry"}]
