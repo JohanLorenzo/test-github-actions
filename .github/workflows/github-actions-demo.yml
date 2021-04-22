@@ -9,9 +9,12 @@ jobs:
       - run: python3 decision.py
       - id: set_docker_images
         run: echo "::set-output name=docker_images::$(cat docker_images.json)"
+      - id: set_applications
+        run: echo "::set-output name=applications::$(cat applications.json)"
 
     outputs:
       docker_images: ${{ steps.set_docker_images.outputs.docker_images }}   # Format: [{"image_name", "image_tag", "image_hash_on_registry"}]
+      applications: ${{ steps.set_applications.outputs.applications }}   # Format: [{"app_name", "image_tag"}]
 
   build_docker_images:
     needs: get_repo_config
@@ -45,3 +48,16 @@ jobs:
           --dockerfile $GITHUB_WORKSPACE/docker/${{ matrix.docker_image.image_name }}/Dockerfile
           --destination=johanlorenzo/test-github-action:${{ matrix.docker_image.image_tag }}
         if: ${{ matrix.docker_image.image_hash_on_registry == '' }}
+
+  build:
+    needs: build_docker_images
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        applications: ${{ fromJSON(needs.get_repo_config.outputs.applications) }}
+
+    container:
+      image: johanlorenzo/test-github-action:${{ matrix.application.image_tag }}
+    steps:
+      - run: python -c 'print("hello world")'

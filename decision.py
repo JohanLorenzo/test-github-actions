@@ -22,6 +22,22 @@ _DOCKER_DIR = os.path.join(_ROOT_DIR, 'docker')
 _DOCKER_REPOSITORY = 'johanlorenzo/test-github-action'
 
 
+_APPLICATIONS = [
+    {
+        "app_name": "my-ansible-app",
+        "image_name": "python-ansible",
+    },
+    {
+        "app_name": "my-other-ansible-app",
+        "image_name": "python-ansible",
+    },
+    {
+        "app_name": "my-tox-app",
+        "image_name": "python-tox",
+    },
+]
+
+
 def hash_path(path):
     """Hash a single file.
 
@@ -84,6 +100,28 @@ def _get_docker_image_hash_on_registry(docker_repository, docker_image_tag):
     return image_hash_on_registry
 
 
+def _get_docker_image_tag_for_single_application(application, docker_images):
+    tags = [
+        image["image_tag"]
+        for image in docker_images
+        if image["image_name"] == application["image_name"]
+    ]
+
+    if len(tags) != 1:
+        raise ValueError(f"We should only have a single image matching. Got: {tags}")
+
+    return tags[0]
+
+
+def _get_docker_image_tags_for_applications(applications, docker_images):
+    applications_with_tags = [{
+        "app_name": app["app_name"],
+        "image_tag": _get_docker_image_tag_for_single_application(app, docker_images)
+    }   for app in applications]
+
+    return applications_with_tags
+
+
 def main():
     docker_dirs = os.listdir(_DOCKER_DIR)
     docker_images = [{
@@ -101,5 +139,10 @@ def main():
 
     with open(os.path.join(_ROOT_DIR, "docker_images.json"), "w") as f:
         json.dump(docker_images, f)
+
+    applications_with_tags = _get_docker_image_tags_for_applications(_APPLICATIONS, docker_images)
+    with open(os.path.join(_ROOT_DIR, "applications.json"), "w") as f:
+        json.dump(applications_with_tags, f)
+
 
 __name__ == "__main__" and main()
