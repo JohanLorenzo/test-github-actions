@@ -51,7 +51,7 @@ jobs:
       - build_docker_images
     runs-on: ubuntu-20.04
 
-    if: ${{ always() }}
+    if: ${{ !failure() }}   # We allow build_docker_images to be skipped, for instance
     strategy:
       matrix:
         applications: ${{ fromJSON(needs.get_repo_config.outputs.applications) }}
