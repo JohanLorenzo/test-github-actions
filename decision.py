@@ -136,6 +136,8 @@ def _get_docker_image_tags_for_applications(applications, docker_images):
 
 
 def main():
+    raise NotImplementedError("Some dummy error to see how GitHub Actions behaves")
+
     docker_dirs = os.listdir(_DOCKER_DIR)
     all_docker_images = [{
         "image_name": docker_dir,
