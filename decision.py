@@ -144,6 +144,7 @@ def main():
     log.warning("Some warning log")
     log.error("Some error log")
 
+
     raise NotImplementedError("Some dummy error to see how GitHub Actions behaves")
 
     docker_dirs = os.listdir(_DOCKER_DIR)
