@@ -138,14 +138,16 @@ def _get_docker_image_tags_for_applications(applications, docker_images):
     return applications_with_tags
 
 
+def output_to_github_variable(variable_name, value):
+    log.info(f'Outputing to Github variable "{variable_name}": {value}')
+    print(f"::set-output name={variable_name}::value")
+
+
 def main():
     log.debug("Some debug log")
     log.info("Some info log")
     log.warning("Some warning log")
     log.error("Some error log")
-
-
-    raise NotImplementedError("Some dummy error to see how GitHub Actions behaves")
 
     docker_dirs = os.listdir(_DOCKER_DIR)
     all_docker_images = [{
@@ -161,13 +163,10 @@ def main():
         for docker_image in all_docker_images
         if not _does_docker_image_already_exist_on_registry(_DOCKER_REPOSITORY, docker_image["image_tag"])
     ]
-
-    with open(os.path.join(_ROOT_DIR, "docker_images.json"), "w") as f:
-        json.dump(docker_images_to_build, f)
+    output_to_github_variable("docker_images", docker_images_to_build)
 
     applications_with_tags = _get_docker_image_tags_for_applications(_APPLICATIONS, all_docker_images)
-    with open(os.path.join(_ROOT_DIR, "applications.json"), "w") as f:
-        json.dump(applications_with_tags, f)
+    output_to_github_variable("applications", applications_with_tags)
 
 
 __name__ == "__main__" and main()

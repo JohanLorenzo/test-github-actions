@@ -6,15 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v2.3.3
       - run: python3 -m pip install requests
-      - run: python3 decision.py
-      - id: set_docker_images
-        run: echo "::set-output name=docker_images::$(cat docker_images.json)"
-      - id: set_applications
-        run: echo "::set-output name=applications::$(cat applications.json)"
+      - id: decision
+        run: python3 decision.py
 
     outputs:
-      docker_images: ${{ steps.set_docker_images.outputs.docker_images }}   # Format: [{"image_name", "image_tag"}]
-      applications: ${{ steps.set_applications.outputs.applications }}   # Format: [{"app_name", "image_tag"}]
+      docker_images: ${{ steps.decision.outputs.docker_images }}   # Format: [{"image_name", "image_tag"}]
+      applications: ${{ steps.decision.outputs.applications }}   # Format: [{"app_name", "image_tag"}]
 
   build_docker_images:
     needs: get_repo_config
