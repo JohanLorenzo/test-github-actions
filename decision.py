@@ -139,8 +139,9 @@ def _get_docker_image_tags_for_applications(applications, docker_images):
 
 
 def output_to_github_variable(variable_name, value):
-    log.info(f'Outputing to Github variable "{variable_name}": {value}')
-    print(f"::set-output name={variable_name}::value")
+    json_value = json.dumps(value)
+    log.info(f'Outputing to Github variable "{variable_name}": {json_value}')
+    print(f"::set-output name={variable_name}::{json_value}")
 
 
 def main():
