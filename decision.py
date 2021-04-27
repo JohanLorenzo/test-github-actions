@@ -20,8 +20,11 @@ import six
 
 log = logging.getLogger(__name__)
 
+# CI is always set to true on Github Actions
+logging_format = "::%(levelname)s file=%(filename)s,line=%(lineno)d::%(asctime)s - %(message)s" if os.environ.get("CI") else "%(asctime)s - %(levelname)s: %(message)s"
+
 logging.basicConfig(
-    format="%(asctime)s - %(levelname)s: %(message)s",
+    format=logging_format,
     level=logging.DEBUG
 )
 
@@ -136,6 +139,11 @@ def _get_docker_image_tags_for_applications(applications, docker_images):
 
 
 def main():
+    log.debug("Some debug log")
+    log.info("Some info log")
+    log.warning("Some warning log")
+    log.error("Some error log")
+
     raise NotImplementedError("Some dummy error to see how GitHub Actions behaves")
 
     docker_dirs = os.listdir(_DOCKER_DIR)
